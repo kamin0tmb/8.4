@@ -1,57 +1,48 @@
 ﻿using System;
 using System.IO;
-
-class BinaryExperiment
+using System.Runtime.Serialization.Formatters.Binary;
+namespace Serialization
 {
-    const string FileName = @"C:\Users\kamin0\Desktop\BinaryFile.bin";
 
-    static void Main()
+    // Описываем наш класс и помечаем его атрибутом для последующей сериализации   
+    [Serializable]
+    class Contact
     {
-        // Пишем
-        WriteValues();
-        // Считываем
-        ReadValues();
-    }
+        public string Name { get; set; }
+        public long PhoneNumber { get; set; }
+        public string Email { get; set; }
 
-    static void WriteValues()
-    {
-       // Создаем объект BinaryWriter и указываем, куда будет направлен поток данных
-        using (BinaryWriter writer = new BinaryWriter(File.Open(FileName, FileMode.Create)))
+        public Contact(string name, long phoneNumber, string email)
         {
-            // записываем данные в разном формате
-            //           writer.Write(20.666F);
-            
-            writer.Write(@$"Файл изменен {DateTime.Now} на компьютере с Windows 10");
- //           writer.Write(55);
- //           writer.Write(false);
+            Name = name;
+            PhoneNumber = phoneNumber;
+            Email = email;
         }
     }
 
-    static void ReadValues()
+    class Program
     {
-        //float FloatValue;
-        string StringValue;
-        //int IntValue;
-        //bool BooleanValue;
-
-        if (File.Exists(FileName))
+        static void Main(string[] args)
         {
-            // Создаем объект BinaryReader и инициализируем его возвратом метода File.Open.
-            using (BinaryReader reader = new BinaryReader(File.Open(FileName, FileMode.Open)))
+            // объект для сериализации
+            var person = new Contact("Иван", 89158683303, "jm187@yandex.ru");
+            Console.WriteLine("Объект создан");
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            // получаем поток, куда будем записывать сериализованный объект
+            using (var fs = new FileStream("myContacts.dat", FileMode.OpenOrCreate))
             {
-                // Применяем специализированные методы Read для считывания соответствующего типа данных.
-                //FloatValue = reader.ReadSingle();
-                StringValue = reader.ReadString();
-                //IntValue = reader.ReadInt32();
-                //BooleanValue = reader.ReadBoolean();
+                formatter.Serialize(fs, person);
+                Console.WriteLine("Объект сериализован");
             }
-
-            Console.WriteLine("Из файла считано:");
-
-            //Console.WriteLine("Дробь: " + FloatValue);
-            Console.WriteLine("Строка: " + StringValue);
-            //Console.WriteLine("Целое: " + IntValue);
-            //Console.WriteLine("Булево значение " + BooleanValue);
+            // десериализация
+            using (var fs = new FileStream("myContacts.dat", FileMode.OpenOrCreate))
+            {
+                var newContact = (Contact)formatter.Deserialize(fs);
+                Console.WriteLine("Объект десериализован");
+                Console.WriteLine($"Имя: {newContact.Name} --- Номер телефона: {newContact.PhoneNumber} --- E-mail: {newContact.Email}");
+            }
+            Console.ReadLine();
         }
     }
 }
