@@ -8,23 +8,24 @@ class BinaryExperiment
     static void Main()
     {
         // Пишем
-        //WriteValues();
+        WriteValues();
         // Считываем
         ReadValues();
     }
 
-   // static void WriteValues()
-   // {
-   //    // Создаем объект BinaryWriter и указываем, куда будет направлен поток данных
-   //     using (BinaryWriter writer = new BinaryWriter(File.Open(SettingsFileName, FileMode.Create)))
-   //     {
-   //         // записываем данные в разном формате
-   //         writer.Write(20.666F);
-   //         writer.Write(@"Тестовая строка");
-   //         writer.Write(55);
-   //         writer.Write(false);
-   //     }
-   // }
+    static void WriteValues()
+    {
+       // Создаем объект BinaryWriter и указываем, куда будет направлен поток данных
+        using (BinaryWriter writer = new BinaryWriter(File.Open(FileName, FileMode.Create)))
+        {
+            // записываем данные в разном формате
+            //           writer.Write(20.666F);
+            
+            writer.Write(@$"Файл изменен {DateTime.Now} на компьютере с Windows 10");
+ //           writer.Write(55);
+ //           writer.Write(false);
+        }
+    }
 
     static void ReadValues()
     {
